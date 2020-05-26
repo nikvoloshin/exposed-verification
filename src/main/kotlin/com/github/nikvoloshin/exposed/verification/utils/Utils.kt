@@ -4,7 +4,7 @@ import kotlin.random.Random
 
 internal fun Random.randomSalt64() = randomSalt(64)
 
-internal fun Random.randomSalt(n: Int) = nextBytes(n).toHex()
+internal fun Random.randomSalt(n: Int) = nextBytes(n / 2).toHex()
 
 internal fun ByteArray.toHex(): String {
     val chars = CharArray(2 * size)
