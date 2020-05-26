@@ -1,7 +1,6 @@
 package com.github.nikvoloshin.exposed.verification.extensions
 
 import com.github.nikvoloshin.exposed.verification.extensions.ContainerDescription.DatabaseVendor.*
-import org.jetbrains.exposed.sql.Database
 import org.testcontainers.containers.JdbcDatabaseContainer
 import org.testcontainers.containers.MSSQLServerContainer
 import org.testcontainers.containers.MySQLContainer
@@ -13,19 +12,18 @@ private val supportedDatabases = listOf(
     ContainerDescription(MSSQL, "mcr.microsoft.com/mssql/server:2019-CU4-ubuntu-16.04")
 )
 
-internal val databases by lazy {
+internal val containers by lazy {
     supportedDatabases.map { description ->
         val name = description.vendor.name
 
         val container = createContainer(description).also {
             // MySQL container takes about 5 minutes to start up
             it.withStartupTimeoutSeconds(600)
+            it.withLogConsumer { println(it.utf8String) }
             it.start()
         }
 
-        val db = Database.connect(container.jdbcUrl, container.driverClassName, container.username, container.password)
-
-        name to db
+        name to container
     }
 }
 
